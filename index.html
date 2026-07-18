@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fun ICT Quiz - Category B</title>
+    <style>
+        :root {
+            --primary: #ff7675;
+            --secondary: #fab1a0;
+            --bg: #fff5f5;
+            --card-bg: #ffffff;
+            --text: #2d3436;
+            --success: #00b894;
+            --error: #d63031;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); padding: 20px; display: flex; justify-content: center; }
+        .quiz-container { max-width: 800px; width: 100%; background: var(--card-bg); padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        header { text-align: center; margin-bottom: 30px; border-bottom: 4px dashed var(--secondary); padding-bottom: 20px; }
+        h1 { color: var(--primary); font-size: 2rem; margin-bottom: 10px; }
+        .badge { background: var(--primary); color: white; padding: 5px 15px; border-radius: 50px; font-size: 0.9rem; font-weight: bold; }
+        .section-title { background: var(--secondary); color: white; padding: 8px 15px; border-radius: 10px; margin: 25px 0 15px 0; font-size: 1.2rem; }
+        .question-card { background: #fffcfb; padding: 20px; border-radius: 15px; margin-bottom: 20px; border-left: 5px solid var(--primary); transition: 0.3s; }
+        .question-text { font-weight: 600; font-size: 1.05rem; margin-bottom: 15px; line-height: 1.6; }
+        .options-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+        .option-label { background: white; padding: 12px 15px; border: 2px solid #e2e8f0; border-radius: 10px; cursor: pointer; display: flex; align-items: center; font-size: 0.95rem; transition: 0.2s; }
+        .option-label:hover { border-color: var(--primary); background: #ffebeb; }
+        .option-label input { margin-right: 12px; transform: scale(1.2); cursor: pointer; }
+        
+        .short-input { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem; margin-top: 10px; outline: none; }
+        .short-input:focus { border-color: var(--primary); }
+
+        /* Access Code Styling */
+        .code-box { background: #ffeaa7; padding: 20px; border-radius: 15px; border: 2px dashed #fdcb6e; margin-top: 30px; text-align: center; }
+        .code-box label { font-weight: bold; display: block; margin-bottom: 10px; color: #d63031; }
+        .code-input { padding: 10px 15px; font-size: 1.1rem; border-radius: 8px; border: 2px solid #fdcb6e; text-align: center; font-weight: bold; width: 200px; outline: none; }
+        .code-input:focus { border-color: var(--primary); }
+
+        .btn-submit { display: block; width: 100%; background: var(--primary); color: white; border: none; padding: 15px; font-size: 1.2rem; font-weight: bold; border-radius: 12px; cursor: pointer; margin-top: 20px; box-shadow: 0 5px 15px rgba(255, 118, 117, 0.4); transition: 0.3s; }
+        .btn-submit:hover { background: #e15f5f; transform: translateY(-2px); }
+        
+        #results-box { display: none; background: #e3faf2; border: 3px solid var(--success); padding: 25px; border-radius: 15px; text-align: center; margin-bottom: 30px; animation: pop 0.4s ease-out; }
+        #results-box h2 { color: var(--success); font-size: 1.8rem; margin-bottom: 10px; }
+        .score-display { font-size: 2.5rem; font-weight: 800; color: var(--primary); }
+        
+        .correct-ans { background: #d4edda !important; border-color: var(--success) !important; color: #155724; font-weight: bold; }
+        .wrong-ans { background: #f8d7da !important; border-color: var(--error) !important; color: #721c24; }
+        .feedback-text { margin-top: 10px; font-size: 0.9rem; font-weight: bold; display: none; }
+        .show-feedback { display: block; }
+        .model-answer { background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px; margin-top: 10px; border-radius: 5px; font-size: 0.9rem; display: none; }
+
+        @keyframes pop { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <header>
+        <h1>🌟 Super ICT Champions</h1>
+        <span class="badge">Category B (Level 2)</span>
+    </header>
+
+    <div id="results-box">
+        <h2>🎉 Quiz එක සාර්ථකව අවසන් කළා!</h2>
+        <p>ඔයා ලබාගත් ලකුණු ප්‍රමාණය මෙන්න:</p>
+        <div class="score-display"><span id="score">0</span> / 33</div>
+        <p style="margin-top: 10px; color: #555;">පහතින් නිවැරදි පිළිතුරු බලාගෙන පාඩම තවත් මතක තියාගන්න!</p>
+    </div>
+
+    <form id="quizForm">
+        <!-- UNIT 1 -->
+        <div class="section-title">🔌 Unit 1: Computer Basics</div>
+        
+        <div class="question-card" data-qtype="mcq" data-correct="D">
+            <div class="question-text">1. පහත සඳහන් ඒවායින් Mobile computer (ජංගම පරිගණක) ගණයට අයත් නොවන පරිගණකය කුමක්ද?</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="q1" value="A"> (A) Tablet computer</label>
+                <label class="option-label"><input type="radio" name="q1" value="B"> (B) Laptop computer</label>
+                <label class="option-label"><input type="radio" name="q1" value="C"> (C) Smart phone</label>
+                <label class="option-label"><input type="radio" name="q1" value="D"> (D) Workstation</label>
+            </div>
+            <div class="feedback-text">නිවැරදි පිළිතුර: (D) Workstation</div>
+        </div>
+
+        <div class="question-card" data-qtype="mcq" data-correct="B">
+            <div class="question-text">2. Processor (CPU) හි වේගය මනිනු ලබන සම්මත ඒකකය කුමක්ද?</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="q2" value="A"> (A) MB සහ GB</label>
+                <label class="option-label"><input type="radio" name="q2" value="B"> (B) MHz සහ GHz</label>
+                <label class="option-label"><input type="radio" name="q2" value="C"> (C) RPM</label>
+                <label class="option-label"><input type="radio" name="q2" value="D"> (D) mm</label>
+            </div>
+            <div class="feedback-text">නිවැරදි පිළිතුර: (B) MHz සහ GHz</div>
+        </div>
+
+        <div class="question-card" data-qtype="mcq" data-correct="B">
+            <div class="question-text">3. CRT, LCD, සහ LED යනු කුමන Peripheral device වර්ගයට අයත් තාක්ෂණයන්ද?</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="q3" value="A"> (A) Printer</label>
+                <label class="option-label"><input type="radio" name="q3" value="B"> (B) Monitor</label>
+                <label class="option-label"><input type="radio" name="q3" value="C"> (C) Hard disk</label>
+                <label class="option-label"><input type="radio" name="q3" value="D"> (D) Keyboard</label>
+            </div>
+            <div class="feedback-text">නිවැරදි පිළිතුර: (B) Monitor</div>
+        </div>
+
+        <div class="question-card" data-qtype="mcq" data-correct="D">
+            <div class="question-text">4. Audio සහ Video (ශබ්දය සහ රූප) යන දෙකම එකවර සම්ප්‍රේෂණය කළ හැකි Port එක කුමක්ද?</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="q4" value="A"> (A) VGA</label>
+                <label class="option-label"><input type="radio" name="q4" value="B"> (B) DVI</label>
+                <label class="option-label"><input type="radio" name="q4" value="C"> (C) USB</label>
+                <label class="option-label"><input type="radio" name="q4" value="D"> (D) HDMI</label>
+            </div>
+            <div class="feedback-text">නිවැරදි පිළිතුර: (D) HDMI</div>
+        </div>
+
+        <div class="question-card" data-qtype="mcq" data-correct="D">
+            <div class="question-text">5. සමාගමෙන් ලබාදෙන සාමාන්‍ය වගකීම් කාලයට අමතරව, වැඩිපුර මුදලක් ගෙවා ලබා ගන්නා Warranty එක කුමක්ද?</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="q5" value="A"> (A) Manufacturer warranty</label>
+                <label class="option-label"><input type="radio" name="q5" value="B"> (B) Onsite warranty</label>
+                <label class="option-label"><input type="radio" name="q5" value="C"> (C) Limited warranty</label>
+                <label class="option-label"><input type="radio" name="q5" value="D"> (D) Extended warranty</label>
+            </div>
+            <div class="feedback-text">නිවැරදි පිළිතුර: (D) Extended warranty</div>
+        </div>
+
+        <div class="question-card" data-qtype="mcq" data-correct="B">
+            <div class="question-text">6. පරිගණකයක මුළු පද්ධතියම පාලනය කරන, දෘඩාංග සහ පරිශීලකයා සම්බන්ධ කරන ප්‍රධාන මෘදුකාංග වර්ගය කුමක්ද?</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="q6" value="A"> (A) Application Software</label>
+                <label class="option-label"><input type="radio" name="q6" value="B"> (B) System Software (OS)</label>
+                <label class="option-label"><input type="radio" name="q6" value="C"> (C) Utility Software</label>
+                <label class="option-label"><input type="radio" name="q6" value="D"> (D) Firmware</label>
+            </div>
+            <div class="feedback-text">නිවැරදි පිළිතුර: (B) System Software (OS)</div>
+        </div>
+
+        <div class="question-card" data-qtype="mcq" data-correct="A">
+            <div class="question-text">7. රූපවාහිනී විකාශන (TV Broadcasting) කටයුතු වලදී දත්ත ගලා යන්නේ කුමන Data communication ක්‍රමයටද?</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="q7" value="A"> (A) Simplex</label>
+                <label class="option-label"><input type="radio" name="q7" value="B"> (B) Half Duplex</label>
+                <label class="option-label"><input type="radio" name="q7" value="C"> (C) Full Duplex</label>
+                <label class="option-label"><input type="radio" name="q7" value="D"> (D) Real duplex</label>
+            </div>
+            <div class="feedback-text">නිවැරදි පිළිතුර: (A) Simplex</div>
+        </div>
+
+        <div class="question-card" data-qtype="mcq" data-correct="B">
+            <div class="question-text">8. පරිගණක දෘඩාංග වලට හානි පැමිණවිය හැකි අකුණු ගැසීම් සහ අධික විදුලි ධාරාවලින් පරිගණකය ආරක්ෂා කර ගැනීමට ගන්නා උපාංගය කුමක්ද?</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="q8" value="A"> (A) UPS</label>
+                <label class="option-label"><input type="radio" name="q8" value="B"> (B) Surge Protector</label>
+                <label class="option-label"><input type="radio" name="q8" value="C"> (C) Stabilizer</label>
+                <label class="option-label"><input type="radio" name="q8" value="D"> (D) Inverter</label>
+            </div>
+            <div class="feedback-text">නිවැරදි පිළිතුර: (B) Surge Protector</div>
+        </div>
+
+        <div class="question-card" data-qtype="mcq" data-correct="C">
+            <div class="question-text">9. පරිගණකයට ඇතුළත් කරන දත්ත ස්ථිරවම ගබඩා කර තබා ගන්නා Secondary storage device එකක් වන්නේ පහත ඒවායින් කුමක්ද?</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="q9" value="A"> (A) RAM</label>
+                <label class="option-label"><input type="radio" name="q9" value="B"> (B) Cache</label>
+                <label class="option-label"><input type="radio" name="q9" value="C"> (C) Hard Disk</label>
+                <label class="option-label"><input type="radio" name="q9" value="D"> (D) Register</label>
+            </div>
+            <div class="feedback-text">නිවැරදි පිළිතුර: (C) Hard Disk</div>
+        </div>
+
+        <div class="question-card" data-qtype="mcq" data-correct="A">
+            <div class="question-text">10. පරිගණක පද්ධතියක් (Computer System) ප්‍රධාන සංරචක 3කට බෙදිය හැක. ඒවා නම් Hardware, Software සහ අනෙක් කොටස කුමක්ද?</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="q10" value="A"> (A) Liveware (User)</label>
+                <label class="option-label"><input type="radio" name="q10" value="B"> (B) Firmware</label>
+                <label class="option-label"><input type="radio" name="q10" value="C"> (C) Malware</label>
+                <label class="option-label"><input type="radio" name="q10" value="D"> (D) Shareware</label>
+            </div>
+            <div class="feedback-text">නිවැරදි පිළිතුර: (A) Liveware (User)</div>
+        </div>
+
+        <div class="question-card" data-qtype="tf" data-correct="False">
+            <div class="question-text">11. [True / False] Touch screen යනු Input device එකක් පමණක් වන අතර එය Output device එකක් ලෙස භාවිතා කළ නොහැක.</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="q11" value="True"> True (හරියි)</label>
+                <label class="option-label"><input type="radio" name="q11" value="False"> False (වැරදියි)</label>
+            </div>
+            <div class="feedback-text">නිවැරදි පිළිතුර: False (වැරදියි - එය Input සහ Output යන කාර්යයන් දෙකටම භාවිතා වේ.)</div>
+        </div>
+
+        <!-- UNIT 2 -->
+        <div class="section-title">📊 Unit 2: Electronic Spreadsheets</div>
+
+        <div class="question-card" data-qtype="mcq" data-correct="C">
+            <div class="question-text">12. Spreadsheet මෘදුකාංගයක Column (තීරුව) දක්වන්නේ කෙසේද?</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="q12" value="A"> (A) සංකේත (Symbols) වලින්</label>
+                <label class="option-label"><input type="radio" name="q12" value="B"> (B) ඉලක්කම් (Numbers) වලින්</label>
+                <label class="option-label"><input type="radio" name="q12" value="C"> (C) ඉංග්‍රීසි අකුරු (English letters) වලින්</label>
+                <label class="option-label"><input type="radio" name="q12" value="D"> (D) රෝම ඉලක්කම් වලින්</label>
+            </div>
+            <div class="feedback-text">නිවැරදි පිළිතුර: (C) ඉංග්‍රීසි අකුරු (English letters) වලින්</div>
+        </div>
+
+        <div class="question-card" data-qtype="mcq" data-correct="D">
+            <div class="question-text">13. Formula එකක් ආරම්භ කිරීමට පෙර අනිවාර්යයෙන්ම යෙදිය යුතු සංකේතය කුමක්ද?</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="q13" value="A"> (A) +</label>
+                <label class="option-label"><input type="radio" name="q13" value="B"> (B) /</label>
+                <label class="option-label"><input type="radio" name="q13" value="C"> (C) *</label>
+                <label class="option-label"><input type="radio" name="q13" value="D"> (D) =</label>
+            </div>
+            <div class="feedback-text">නිවැරදි පිළිතුර: (D) =</div>
+        </div>
+
+        <div class="question-card" data-qtype="mcq" data-correct="C">
+            <div class="question-text">14. Cells කිහිපයක් එකක් බවට පත් කර එහි ඇති Text එක මැදට කිරීමට භාවිතා කරන Formatting tool එක කුමක්ද?</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="q14" value="A"> (A) Wrap Text</label>
+                <label class="option-label"><input type="radio" name="q14" value="B"> (B) Orientation</label>
+                <label class="option-label"><input type="radio" name="q14" value="C"> (C) Merge and Center</label>
+                <label class="option-label"><input type="radio" name="q14" value="D"> (D) Borders</label>
+            </div>
+            <div class="feedback-text">නිවැරදි පිළිතුර: (C) Merge and Center</div>
+        </div>
+
+        <div class="question-card" data-qtype="mcq" data-correct="C">
+            <div class="question-text">15. අවලංගු කරන ලද ක්‍රියාවක් (Undo කළ දෙයක්) නැවත කිරීමට භාවිතා කරන Tool එක කුමක්ද?</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="q15" value="A"> (A) Copy</label>
+                <label class="option-label"><input type="radio" name="q15" value="B"> (B) Paste</label>
+                <label class="option-label"><input type="radio" name="q15" value="C"> (C) Redo</label>
+                <label class="option-label"><input type="radio" name="q15" value="D"> (D) Print Preview</label>
+            </div>
+            <div class="feedback-text">නිවැරදි පිළිතුර: (C) Redo</div>
+        </div>
+
+        <div class="question-card" data-qtype="mcq" data-correct="C">
+            <div class="question-text">16. දත්ත විශ්ලේෂණය කිරීම සඳහා Pie, Line, Column, සහ Bar ආදිය භාවිතා කරන්නේ කුමන කාණ්ඩය යටතේද?</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="q16" value="A"> (A) Functions</label>
+                <label class="option-label"><input type="radio" name="q16" value="B"> (B) Formulas</label>
+                <label class="option-label"><input type="radio" name="q16" value="C"> (C) Charts</label>
+                <label class="option-label"><input type="radio" name="q16" value="D"> (D) Tables</label>
+            </div>
+            <div class="feedback-text">නිවැරදි පිළිතුර: (C) Charts</div>
+        </div>
+
+        <div class="question-card" data-qtype="mcq" data-correct="B">
+            <div class="question-text">17. Spreadsheet එකක තිරස්ව පිහිටා ඇති, ඉලක්කම් මගින් පෙන්වන කොටස් හඳුන්වන්නේ කුමන නමකින්ද?</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="q17" value="A"> (A) Columns</label>
+                <label class="option-label"><input type="radio" name="q17" value="B"> (B) Rows</label>
+                <label class="option-label"><input type="radio" name="q17" value="C"> (C) Cells</label>
+                <label class="option-label"><input type="radio" name="q17" value="D"> (D) Formulas</label>
+            </div>
+            <div class="feedback-text">නිවැරදි පිළිතුර: (B) Rows</div>
+        </div>
+
+        <div class="question-card" data-qtype="mcq" data-correct="B">
+            <div class="question-text">18. Cell range එකක ඇති උපරිම (ලොකුම) අගය සෙවීම සඳහා භාවිතා කරන Function එක කුමක්ද?</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="q18" value="A"> (A) MIN</label>
+                <label class="option-label"><input type="radio" name="q18" value="B"> (B) MAX</label>
+                <label class="option-label"><input type="radio" name="q18" value="C"> (C) LARGE</label>
+                <label class="option-label"><input type="radio" name="q18" value="D"> (D) HIGHEST</label>
+            </div>
+            <div class="feedback-text">නිවැරදි පිළිතුර: (B) MAX</div>
+        </div>
+
+        <div class="question-card" data-qtype="mcq" data-correct="B">
+            <div class="question-text">19. තෝරාගත් Cells කිහිපයක ඇති මුළු දත්ත සංඛ්‍යාව (ගණන) සෙවීම සඳහා භාවිතා කරන Function එක කුමක්ද?</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="q19" value="A"> (A) SUM</label>
+                <label class="option-label"><input type="radio" name="q19" value="B"> (B) COUNT</label>
+                <label class="option-label"><input type="radio" name="q19" value="C"> (C) ADD</label>
+                <label class="option-label"><input type="radio" name="q19" value="D"> (D) TOTAL</label>
+            </div>
+            <div class="feedback-text">නිවැරදි පිළිතුර: (B) COUNT</div>
+        </div>
+
+        <div class="question-card" data-qtype="mcq" data-correct="B">
+            <div class="question-text">20. Spreadsheet එකක ඇති Cell එකක් වෙනත් තැනකට Copy කිරීමේදී එහි Formula එක වෙනස් නොවන සේ රඳවා තබා ගැනීමට (Absolute Cell Reference) භාවිතා කරන සංකේතය කුමක්ද?</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="q20" value="A"> (A) %</label>
+                <label class="option-label"><input type="radio" name="q20" value="B"> (B) $</label>
+                <label class="option-label"><input type="radio" name="q20" value="C"> (C) &</label>
+                <label class="option-label"><input type="radio" name="q20" value="D"> (D) #</label>
+            </div>
+            <div class="feedback-text">නිවැරදි පිළිතුර: (B) $</div>
+        </div>
+
+        <div class="question-card" data-qtype="mcq" data-correct="B">
+            <div class="question-text">21. Spreadsheet එකක අකුරු වල ප්‍රමාණය, වර්ණය සහ Borders ආදිය වෙනස් කර ලස්සන කිරීම හඳුන්වන පොදු නම කුමක්ද?</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="q21" value="A"> (A) Editing</label>
+                <label class="option-label"><input type="radio" name="q21" value="B"> (B) Formatting</label>
+                <label class="option-label"><input type="radio" name="q21" value="C"> (C) Sorting</label>
+                <label class="option-label"><input type="radio" name="q21" value="D"> (D) Filtering</label>
+            </div>
+            <div class="feedback-text">නිවැරදි පිළිතුර: (B) Formatting</div>
+        </div>
+
+        <div class="question-card" data-qtype="tf" data-correct="False">
+            <div class="question-text">22. [True / False] Spreadsheet එකක Row (පේළිය) ඉංග්‍රීසි අකුරු (English letters) මගින් නිරූපණය කෙරේ.</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="q22" value="True"> True (හරියි)</label>
+                <label class="option-label"><input type="radio" name="q22" value="False"> False (වැරදියි)</label>
+            </div>
+            <div class="feedback-text">නිවැරදි පිළිතුර: False (වැරදියි - පේළි නිරූපණය කරන්නේ ඉලක්කම් වලිනි.)</div>
+        </div>
+
+        <!-- UNIT 3 -->
+        <div class="section-title">🤖 Unit 3: Programming</div>
+
+        <div class="question-card" data-qtype="mcq" data-correct="B">
+            <div class="question-text">23. දාදු කැටයක් (dice) උඩ දැමූ විට ලැබෙන අගය තේරීම උදාහරණයක් වන්නේ පහත කුමකටද?</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="q23" value="A"> (A) Simple Selection</label>
+                <label class="option-label"><input type="radio" name="q23" value="B"> (B) Multiple-condition Selection</label>
+                <label class="option-label"><input type="radio" name="q23" value="C"> (C) Infinite Repetition</label>
+                <label class="option-label"><input type="radio" name="q23" value="D"> (D) Nested Repetition</label>
+            </div>
+            <div class="feedback-text">නිවැරදි පිළිතුර: (B) Multiple-condition Selection</div>
+        </div>
+
+        <div class="question-card" data-qtype="mcq" data-correct="C">
+            <div class="question-text">24. "කොන්දේසියක් සත්‍ය වන තුරු" (Until a condition is true) Repetition එකක් සිදු කිරීම සඳහා Scratch හි භාවිතා කරන Block එක කුමක්ද?</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="q24" value="A"> (A) repeat</label>
+                <label class="option-label"><input type="radio" name="q24" value="B"> (B) forever</label>
+                <label class="option-label"><input type="radio" name="q24" value="C"> (C) repeat until</label>
+                <label class="option-label"><input type="radio" name="q24" value="D"> (D) if ... then</label>
+            </div>
+            <div class="feedback-text">නිවැරදි පිළිතුර: (C) repeat until</div>
+        </div>
+
+        <div class="question-card" data-qtype="mcq" data-correct="D">
+            <div class="question-text">25. එකම නමකින් Values (අගයයන්) විශාල ප්‍රමාණයක් තැන්පත් කර තබා ගත හැකි Data structure එක කුමක්ද?</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="q25" value="A"> (A) Function</label>
+                <label class="option-label"><input type="radio" name="q25" value="B"> (B) Loop</label>
+                <label class="option-label"><input type="radio" name="q25" value="C"> (C) Variable</label>
+                <label class="option-label"><input type="radio" name="q25" value="D"> (D) Array</label>
+            </div>
+            <div class="feedback-text">නිවැරදි පිළිතුර: (D) Array</div>
+        </div>
+
+        <div class="question-card" data-qtype="mcq" data-correct="D">
+            <div class="question-text">26. ජල මෝටරයක් මගින් ජල ටැංකියක් පිරෙන තුරු එය ක්‍රියාත්මක වීම කුමන Control structure එකකට උදාහරණයක්ද?</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="q26" value="A"> (A) Selection</label>
+                <label class="option-label"><input type="radio" name="q26" value="B"> (B) Sequence</label>
+                <label class="option-label"><input type="radio" name="q26" value="C"> (C) Array</label>
+                <label class="option-label"><input type="radio" name="q26" value="D"> (D) Repetition</label>
+            </div>
+            <div class="feedback-text">නිවැරදි පිළිතුර: (D) Repetition</div>
+        </div>
+
+        <div class="question-card" data-qtype="mcq" data-correct="B">
+            <div class="question-text">27. සරල ඉංග්‍රීසි භාෂාව සහ Programming සංකේත එකතු කර ලියන, පරිගණකයකට ධාවනය කළ නොහැකි Algorithm ලිවීමේ ක්‍රමය කුමක්ද?</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="q27" value="A"> (A) Flowchart</label>
+                <label class="option-label"><input type="radio" name="q27" value="B"> (B) Pseudo code</label>
+                <label class="option-label"><input type="radio" name="q27" value="C"> (C) Binary code</label>
+                <label class="option-label"><input type="radio" name="q27" value="D"> (D) Logic Gate</label>
+            </div>
+            <div class="feedback-text">නිවැරදි පිළිතුර: (B) Pseudo code</div>
+        </div>
+
+        <div class="question-card" data-qtype="mcq" data-correct="C">
+            <div class="question-text">28. Scratch හි කොන්දේසියක් සත්‍ය නම් පමණක් (If a condition is true) ක්‍රියාවක් කිරීමට ගන්නා Block එක කුමක්ද?</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="q28" value="A"> (A) repeat 10</label>
+                <label class="option-label"><input type="radio" name="q28" value="B"> (B) forever</label>
+                <label class="option-label"><input type="radio" name="q28" value="C"> (C) if ... then</label>
+                <label class="option-label"><input type="radio" name="q28" value="D"> (D) repeat until</label>
+            </div>
+            <div class="feedback-text">නිවැරදි පිළිතුර: (C) if ... then</div>
+        </div>
+
+        <div class="question-card" data-qtype="mcq" data-correct="B">
+            <div class="question-text">29. Flowchart එකක ආරම්භය (Start) සහ අවසානය (End) දැක්වීම සඳහා භාවිතා කරන හැඩය කුමක්ද?</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="q29" value="A"> (A) Rectangle</label>
+                <label class="option-label"><input type="radio" name="q29" value="B"> (B) Oval / Terminator</label>
+                <label class="option-label"><input type="radio" name="q29" value="C"> (C) Parallelogram</label>
+                <label class="option-label"><input type="radio" name="q29" value="D"> (D) Diamond</label>
+            </div>
+            <div class="feedback-text">නිවැරදි පිළිතුර: (B) Oval / Terminator</div>
+        </div>
+
+        <div class="question-card" data-qtype="mcq" data-correct="B">
+            <div class="question-text">30. Scratch හි යම් සිදුවීමක් (උදා: කොළ පාට කොඩිය ක්ලික් කළ විට) ආරම්භ කිරීමට ගන්නා Block වර්ගය කුමක්ද?</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="q30" value="A"> (A) Motion</label>
+                <label class="option-label"><input type="radio" name="q30" value="B"> (B) Events</label>
+                <label class="option-label"><input type="radio" name="q30" value="C"> (C) Sensing</label>
+                <label class="option-label"><input type="radio" name="q30" value="D"> (D) Operators</label>
+            </div>
+            <div class="feedback-text">නිවැරදි පිළිතුර: (B) Events</div>
+        </div>
+
+        <div class="question-card" data-qtype="mcq" data-correct="B">
+            <div class="question-text">31. Flowchart එකක දත්ත ඇතුළත් කිරීම (Input) හෝ ප්‍රතිදානය (Output) පෙන්වීමට ගන්නා ජ්‍යාමිතික හැඩය කුමක්ද?</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="q31" value="A"> (A) Rectangle</label>
+                <label class="option-label"><input type="radio" name="q31" value="B"> (B) Parallelogram (සමාන්තරාස්‍රය)</label>
+                <label class="option-label"><input type="radio" name="q31" value="C"> (C) Circle</label>
+                <label class="option-label"><input type="radio" name="q31" value="D"> (D) Diamond</label>
+            </div>
+            <div class="feedback-text">නිවැරදි පිළිතුර: (B) Parallelogram (සමාන්තරාස්‍රය)</div>
+        </div>
+
+        <div class="question-card" data-qtype="mcq" data-correct="B">
+            <div class="question-text">32. Scratch හි ගණිතමය කර්ම (එකතු කිරීම, අඩු කිරීම) සහ සන්සන්දනය කිරීම් සිදු කරනු ලබන Block කාණ්ඩය කුමක්ද?</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="q32" value="A"> (A) Control</label>
+                <label class="option-label"><input type="radio" name="q32" value="B"> (B) Operators</label>
+                <label class="option-label"><input type="radio" name="q32" value="C"> (C) Sensing</label>
+                <label class="option-label"><input type="radio" name="q32" value="D"> (D) Variables</label>
+            </div>
+            <div class="feedback-text">නිවැරදි පිළිතුර: (B) Operators</div>
+        </div>
+
+        <div class="question-card" data-qtype="tf" data-correct="False">
+            <div class="question-text">33. [True / False] Scratch වල forever block එක භාවිතා කරන්නේ කොන්දේසියක් සත්‍ය වන තුරු පමණක් Repetition එකක් සිදු කිරීමටය.</div>
+            <div class="options-grid">
+                <label class="option-label"><input type="radio" name="q33" value="True"> True (හරියි)</label>
+                <label class="option-label"><input type="radio" name="q33" value="False"> False (වැරදියි)</label>
+            </div>
+            <div class="feedback-text">නිවැරදි පිළිතුර: False (වැරදියි - forever block එක භාවිතා කරන්නේ අසීමිත වාර ගණනක් පුනර්කරණය කිරීමටය.)</div>
+        </div>
+
+        <!-- SHORT ANSWERS SECTION -->
+        <div class="section-title">📝 Short Answer Questions (කෙටි ප්‍රශ්න)</div>
+        
+        <div class="question-card" data-qtype="short">
+            <div class="question-text">34. දත්ත විශාල ප්‍රමාණයක් පහසුවෙන් සංසන්දනය කර බලා ගැනීමට සහ රටාවන් (patterns) හඳුනා ගැනීමට Spreadsheet වල භාවිතා කරන Charts වල ප්‍රයෝජන 2ක් ලියන්න.</div>
+            <input type="text" class="short-input" placeholder="ඔයාගේ උත්තරය මෙතන ලියන්න...">
+            <div class="model-answer">💡 <b>ආදර්ශ පිළිතුර (Model Answer):</b> 1. සංකීර්ණ දත්ත ලේඛන බැලූ බැල්මට තේරුම් ගත හැකි පරිදි සරලව රූපමය ලෙස දැකගත හැකි වීම. 2. දත්තවල සිදුවන වෙනස්වීම්වල රටාවන් (Trends) ඉතා වේගයෙන් හඳුනාගෙන තීරණ ගැනීමට පහසු වීම.</div>
+        </div>
+
+        <div class="question-card" data-qtype="short">
+            <div class="question-text">35. ව්ශාල ගැටලුවක් විසඳීම පහසු කර ගැනීම සඳහා එය කුඩා කොටස් වලට වෙන් කිරීමේ ක්‍රියාවලිය Decomposition ලෙස හඳුන්වයි. මෙමගින් ක්‍රමලේඛකයෙකුට (Programmer) ලැබෙන ප්‍රධාන වාසි 2ක් සඳහන් කරන්න.</div>
+            <input type="text" class="short-input" placeholder="ඔයාගේ උත්තරය මෙතන ලියන්න...">
+            <div class="model-answer">💡 <b>ආදර්ශ පිළිතුර (Model Answer):</b> 1. සංකීර්ණ ගැටලුවක් සරල කොටස් වලට කැඩීම නිසා කෝඩ් එක ලිවීම සහ තේරුම් ගැනීම පහසු වීම. 2. වැඩසටහනේ ඇතිවන වැරදි (Errors / Bugs) ඉතා ලේසියෙන් සොයාගෙන නිවැරදි කිරීමට හැකි වීම.</div>
+        </div>
+
+        <div class="question-card" data-qtype="short">
+            <div class="question-text">36. Scratch Programming වලදී Variable එකක් සහ List (Array) එකක් අතර ඇති වෙනස සරලව පැහැදිලි කරන්න.</div>
+            <input type="text" class="short-input" placeholder="ඔයාගේ උත්තරය මෙතන ලියන්න...">
+            <div class="model-answer">💡 <b>ආදර්ශ පිළිතුර (Model Answer):</b> Variable එකකට ගබඩා කළ හැක්කේ එක වරකට එක අගයක් (Single Value) පමණි. නමුත් List (Array) එකකට එකම නම යටතේ එකිනෙකට වෙනස් අගයන් විශාල ප්‍රමාණයක් (Multiple Values) එක පෙළට ගබඩා කර තබා ගත හැක.</div>
+        </div>
+
+        <!-- Secret Access Code Container -->
+        <div class="code-box">
+            <label for="accessCode">🔐 Enter Secret Access Code to Submit:</label>
+            <input type="password" id="accessCode" class="code-input" placeholder="••••••••">
+        </div>
+
+        <button type="button" class="btn-submit" onclick="checkQuiz()">Submit Quiz 🚀</button>
+    </form>
+</div>
+
+<script>
+    function checkQuiz() {
+        const enteredCode = document.getElementById('accessCode').value.trim();
+        const secretCode = "20031124";
+
+        if (enteredCode !== secretCode) {
+            alert("❌ වැරදි රහස් කේතයක්! කරුණාකර නිවැරදි කේතය (Access Code) ඇතුළත් කර නැවත උත්සාහ කරන්න.");
+            return;
+        }
+
+        let score = 0;
+        const cards = document.querySelectorAll('.question-card');
+
+        cards.forEach(card => {
+            const type = card.getAttribute('data-qtype');
+            
+            if (type === 'mcq' || type === 'tf') {
+                const correct = card.getAttribute('data-correct');
+                const name = card.querySelector('input').getAttribute('name');
+                const selected = card.querySelector(`input[name="${name}"]:checked`);
+                const feedback = card.querySelector('.feedback-text');
+                const labels = card.querySelectorAll('.option-label');
+
+                labels.forEach(l => l.classList.remove('correct-ans', 'wrong-ans'));
+
+                if (selected) {
+                    if (selected.value === correct) {
+                        score++;
+                        selected.parentElement.classList.add('correct-ans');
+                    } else {
+                        selected.parentElement.classList.add('wrong-ans');
+                        labels.forEach(l => {
+                            if(l.textContent.includes(`(${correct})`) || l.textContent.trim().startsWith(correct)) {
+                                l.classList.add('correct-ans');
+                            }
+                        });
+                    }
+                } else {
+                    labels.forEach(l => {
+                        if(l.textContent.includes(`(${correct})`) || l.textContent.trim().startsWith(correct)) {
+                            l.classList.add('correct-ans');
+                        }
+                    });
+                }
+                feedback.classList.add('show-feedback');
+            } else if (type === 'short') {
+                const modelAns = card.querySelector('.model-answer');
+                modelAns.style.display = 'block';
+            }
+        });
+
+        const resultsBox = document.getElementById('results-box');
+        document.getElementById('score').innerText = score;
+        resultsBox.style.display = 'block';
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+</script>
+
+</body>
+</html>
